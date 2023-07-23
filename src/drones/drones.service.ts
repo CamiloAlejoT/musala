@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import * as fs from 'fs';
 import { Drone } from "../interfaces/drones.interface"
+import { EntitiesService } from "../entities/entities/entities.service"
 import {
   WEIGHTLIMIT,
   BATTERYCAPACITY,
@@ -12,6 +13,7 @@ import {
   SERIALNUMBEREXIST,
   SERIALNUMBERLONGER,
   WEIGHTLIMITBIGGER,
+  DRONEENTITY,
   DroneWeight,
   DroneState
 } from '../interfaces/drones.enum'
@@ -21,72 +23,61 @@ export class DronesService {
 
   private drones: Drone[];
 
-  constructor() {
-    this.drones = this.loadDronesFromFile();
+  constructor(
+    private entitiesService: EntitiesService
+  ) { }
+
+
+  async getAllDrones(): Promise<Drone[]> {
+    return await this.entitiesService.findAll();
   }
 
-  private loadDronesFromFile(): any[] {
-    try {
-      const rawData = fs.readFileSync('droneInformartion.json', 'utf-8');
-      return JSON.parse(rawData);
-    } catch (error) {
-      console.error('Error reading or parsing the drones.json file:', error);
-      return [];
-    }
-  }
-
-
-  getAllDrones(): any[] {
-    return this.drones;
-  }
-
-  getDroneBySerialNumber(serialNumber: string): Drone {
-    const drone = this.drones.find(e => e.serialNumber === serialNumber)
+  async getDroneBySerialNumber(serialNumber: string): Promise<Drone> {
+    const drone = await this.entitiesService.findBySerialNumber(serialNumber)
     if (drone)
       return drone
     else
       throw new HttpException('Resource not found', HttpStatus.NOT_FOUND);
   }
 
-  filterDronesByParams(
+  async filterDronesByParams(
     model?: string,
     state?: string,
     weightLimit?: number,
     weightLimitSorter?: boolean,
     batteryCapacity?: number,
-    batteryCapacitySorter?: boolean): Drone[] {
-
-    let filteredDrones = [...this.drones];
-
+    batteryCapacitySorter?: boolean): Promise<Drone[]> {
+    let query: string = `SELECT * FROM ${DRONEENTITY} WHERE `
+    let flag = true
     if (model) {
-      filteredDrones = filteredDrones.filter((drone) => drone.model === model);
+      query += `model='${model}' `
+      flag = false
     }
-
     if (state) {
-      filteredDrones = filteredDrones.filter((drone) => drone.state === state);
+      query += `${flag ? '' : 'AND '}state='${state}' `
+      flag = false
     }
-
-
     if (weightLimit) {
-      filteredDrones = weightLimitSorter ?
-        filteredDrones.filter((drone) => drone.weightLimit <= weightLimit) :
-        filteredDrones.filter((drone) => drone.weightLimit >= weightLimit)
+      query += weightLimitSorter ?
+        `${flag ? '' : 'AND '}weightLimit <= ${weightLimit} ` :
+        `${flag ? '' : 'AND '}weightLimit >= ${weightLimit} `
+      flag = false
     }
-
     if (batteryCapacity) {
-      filteredDrones = batteryCapacitySorter ?
-        filteredDrones.filter((drone) => drone.batteryCapacity <= batteryCapacity) :
-        filteredDrones.filter((drone) => drone.batteryCapacity >= batteryCapacity)
+      query += batteryCapacitySorter ?
+        `${flag ? '' : 'AND '}batteryCapacity <= ${batteryCapacity}` :
+        `${flag ? '' : 'AND '}batteryCapacity >= ${batteryCapacity}`
     }
-
-    if (filteredDrones.length > 0)
-      return filteredDrones
+    query += ";"
+    const queryResult = await this.entitiesService.findWithMultipleParams(query)
+    if (queryResult.length > 0)
+      return queryResult
     else
       throw new HttpException('No matches for that query', HttpStatus.NOT_FOUND);
   }
 
-  createNewDrone(data: Drone) {
-    const { res, message } = this.validateDroneInformation(data)
+  async createNewDrone(data: Drone) {
+    const { res, message } = await this.validateDroneInformation(data)
     if (res) {
       return this.insertNewDrone(data)
     } else {
@@ -94,34 +85,32 @@ export class DronesService {
     }
   }
 
-  insertNewDrone(data: Drone) {
-    this.drones.push(data)
-    return { message: "Drone saved successfully.", drone: data }
+  async updateDrone(data: Drone) {
+    const result = await this.entitiesService.update(data)
+    return { message: "Drone updated successfully", result: result }
   }
 
-  updateDrone(data: Drone) {
-    const updatedDrones = this.drones.map(drone => {
-      if (drone.serialNumber === data.serialNumber) {
-        return { ...drone, ...data };
-      }
-      return drone;
-    });
-    this.drones = updatedDrones
-
-    return { message: "Drone updated successfully", drone: data }
+  async deleteDrone(id: Number) {
+    const result = await this.entitiesService.delete(id)
+    return { message: "Drone deleted successfully", result: result }
   }
 
-  updateData(data: Drone) {
-    const { res, message } = this.validateEmptyFields(data)
+  async insertNewDrone(data: Drone) {
+    const insert = await this.entitiesService.create(data)
+    return { message: "Drone saved successfully.", result: insert }
+  }
+
+  async updateData(id: number, data: Drone) {
+    const { res, message } = await this.validateEmptyFields(id, data)
     if (res) {
-      return this.validateUpdateData(data)
+      return await this.validateUpdateData(data)
     } else {
       throw new HttpException(message, HttpStatus.NOT_FOUND)
     }
   }
 
-  validateUpdateData(data: Drone) {
-    const { res, message } = this.validateDroneInformation(data)
+  async validateUpdateData(data: Drone) {
+    const { res, message } = await this.validateDroneInformation(data)
     if ((res) || (!res && message === SERIALNUMBEREXIST)) {
       return this.updateDrone(data)
     } else {
@@ -129,18 +118,19 @@ export class DronesService {
     }
   }
 
-  validateEmptyFields(data: Drone) {
+  async validateEmptyFields(id: number, data: Drone) {
     if (!data.batteryCapacity || !data.model || !data.serialNumber || !data.state || !data.weightLimit)
       return { res: false, message: EMPTYFIELDS }
 
-    if (!this.drones.some(drone => drone.serialNumber === data.serialNumber))
+    const drones: Drone[] = await this.entitiesService.findAll()
+    if (!drones.some(drone => drone.id === id))
       return { res: false, message: DRONENOTFOUND }
 
     return { res: true, message: "" }
   }
 
 
-  validateDroneInformation(data: Drone) {
+  async validateDroneInformation(data: Drone) {
     if (data.serialNumber.length >= 100)
       return { res: false, message: SERIALNUMBERLONGER }
 
@@ -156,9 +146,9 @@ export class DronesService {
     if (!Object.values(DroneWeight).includes(data.model as DroneWeight))
       return { res: false, message: DRONEMODELINCORRECT }
 
-    if (this.drones.some(drone => drone.serialNumber === data.serialNumber))
+    const drones: Drone[] = await this.entitiesService.findAll()
+    if (drones.some(drone => drone.serialNumber === data.serialNumber))
       return { res: false, message: SERIALNUMBEREXIST }
-
     return { res: true, message: '' }
   }
 

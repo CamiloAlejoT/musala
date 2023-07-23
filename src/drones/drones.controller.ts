@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Query, Body, Put } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Body, Put, Delete } from '@nestjs/common';
 import { DronesService } from './drones.service'
 import { Drone } from "../interfaces/drones.interface"
 
@@ -8,9 +8,14 @@ export class DronesController {
 
     constructor(private readonly dronesService: DronesService) { }
 
+    @Get("all")
+    getAllDrones() {
+        return this.dronesService.getAllDrones()
+    }
+
 
     @Get(':serialNumber')
-    getDroneBySerialNumber(@Param('serialNumber') serialNumber: string): Drone {
+    getDroneBySerialNumber(@Param('serialNumber') serialNumber: string): Promise<Drone> {
         return this.dronesService.getDroneBySerialNumber(serialNumber);
     }
 
@@ -22,7 +27,7 @@ export class DronesController {
         @Query('weightLimitSorter') weightLimitSorter?: boolean,
         @Query('batteryCapacity') batteryCapacity?: number,
         @Query('batteryCapacitySorter') batteryCapacitySorter?: boolean
-    ): Drone[] {
+    ): Promise<Drone[]> {
 
         return this.dronesService.filterDronesByParams(
             model,
@@ -39,14 +44,14 @@ export class DronesController {
         return this.dronesService.createNewDrone(data)
     }
 
-    @Put('update')
-    updateData(@Body() data: Drone) {
-        return this.dronesService.updateData(data)
+    @Put(':id/update')
+    updateData(@Param('id') id, @Body() data: Drone) {
+        return this.dronesService.updateData(Number(id) , data)
     }
 
-
-
-
-
+    @Delete(':id/delete')
+    async delete(@Param('id') id): Promise<any> {
+      return this.dronesService.deleteDrone(id);
+  }  
 }
 
