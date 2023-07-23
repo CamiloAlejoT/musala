@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Body, Put } from '@nestjs/common';
 import { DronesService } from './drones.service'
 import { Drone } from "../interfaces/drones.interface"
 
@@ -33,6 +33,19 @@ export class DronesController {
             batteryCapacitySorter)
 
     }
+
+    @Post('create')
+    createNewDrone(@Body() data: Drone) {
+        return this.dronesService.createNewDrone(data)
+    }
+
+    @Put('update')
+    updateData(@Body() data: Drone) {
+        return this.dronesService.updateData(data)
+    }
+
+
+
 
 
 }
