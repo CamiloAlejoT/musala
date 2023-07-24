@@ -30,7 +30,7 @@ The service should allow:
 - checking available drones for loading;
 - check drone battery level for a given drone;
 
-## Requirements 
+## Requirements
 ```bash
 Functional requirements
 - There is no need for UI;
@@ -57,11 +57,23 @@ Non-functional requirements
 - get drones by other fields: [base ULR]/drones/[ params ] 
     * params: model, state, weightLimit, batteryCapacity, weightLimitSorter and batteryCapacitySorter, the fileds weightLimitSorter and batteryCapacitySorter are booleans if false or not set the result will be bigget than, if true the results will be lower than. E.G:
     http://localhost:3000/drones/?batteryCapacity=60&batteryCapacitySorter=true all drones with battery less than 60%  or http://localhost:3000/drones/?model=Lightweight&state=LOADED all drones in estatus "LOADED" and model "Lightweight"
-
 - create new drone: [base URL]/drones/create
 - update drone: can not update a drone that have a dispatch in a state diffrent than DONE
 - delte drone: can not delete a drone that have a dispatch in a state diffrent than DONE
 
+
+- get all medication: [base URL]/medication/all
+- Create medicine: [base URL]/medication/create, the image parameter is a string wit the URL 
+
+- get all dispatches: [base URL]/dispatch/all
+- get dispatch by id: [base URL]/dispatch/[ id ]
+- get drone with a list of all medications in active dispatch: [base URL]/dispatch/droneDetail/[ id ] (drone id)
+- update a dispatch: [base URL]/dispatch/[ id ]/update only can update the status, not medicines or asigned drone. estatus aviable are 'Pending', 'In progress' and'Done'. 
+- create a dispatch:  [base URL]/dispatch/create recieve two fields, asignedDrone is a number the drone ID, and the second is a string with all the medications IDs separated by , E.X: "1,2,3" it indicates the dispatch is going to have the medications with id 1, 2 and 3
+
+
+One last end point was added to the drone controler but is only to get the audit log for the periodic task
+ [base URL]/drones/auditURL
 
 ## Installation
 
