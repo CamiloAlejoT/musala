@@ -14,6 +14,12 @@ export enum DroneState {
     RETURNING = "RETURNING"
 }
 
+export enum DispatchStatus { 
+    PENDING = "Pending",
+    INPROGRESS = "In progress",
+    DONE = "Done"
+}
+
 
 export const WEIGHTLIMIT = 500
 export const BATTERYCAPACITY = 100
@@ -39,5 +45,13 @@ export const NAMENOTALLOWED = "Medication name not allowed, allowed only letters
 export const CODENOTALLOWED = "Medication code not allowed, allowed only upper case letters, underscore and numbers"
 
 
+export const DISPATCHWEIGHTERROR = "The weight for this dispatch is to big, please select another drone or remove some medicine"
+export const DISPATCHWEIGHTBIGERTHANDRONE = "The dispatch's total weight is bigger than the selected drone can carry "
+export const DISPATCHDRONEBATTERYERROR = "The selected drone's baterry is under 25% please select another drone or recharge the drone"
+export const DRONEALREADYUSED = "The selected dron for the dispatch is already in use"
+
+
+
 
 export const DRONEENTITY = "drone_entity"
+export const MEDICATIONENTITY = "'medication_entity'"

@@ -5,6 +5,7 @@ import {
   CODENOTALLOWED,
   EMPTYFIELDS,
   MEDICATIONCODEREGEX,
+  MEDICATIONENTITY,
   MEDICATIONNAMEREGEX,
   NAMENOTALLOWED,
   WEIGHTLIMITBIGGER
@@ -23,6 +24,12 @@ export class MedicationService {
     return await this.entitiesService.findAllMedications();
   }
 
+  async getMedicationByID(id: number): Promise<Medication> {
+    return await this.entitiesService.findMedicationByID(id)
+  }
+
+
+
   async createNewMedication(data: Medication) {
     const { res, message } = await this.validateMedicationInformation(data)
     if (res) {
@@ -32,6 +39,9 @@ export class MedicationService {
     }
   }
 
+  async findMedicationByQuery(query: string): Promise<Medication[]> {
+    return await this.entitiesService.findMedicationByQuery(query)
+  }
 
   async validateMedicationInformation(data: Medication) {
 

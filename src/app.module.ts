@@ -5,6 +5,7 @@ import { DronesModule } from './drones/drones.module';
 import { MedicationModule } from './medication/medication.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EntitiesModule } from './entities/entities.module';
+import { DispatchModule } from './dispatch/dispatch.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { EntitiesModule } from './entities/entities.module';
       database: 'db',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-    })
+    }),
+    DispatchModule
   ],
   controllers: [AppController],
   providers: [AppService],

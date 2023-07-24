@@ -6,6 +6,7 @@ import { EntitiesModule } from 'src/entities/entities.module';
 @Module({
   controllers: [MedicationController],
   providers: [MedicationService],
+  exports: [MedicationService],
   imports: [EntitiesModule]
 })
 export class MedicationModule { }

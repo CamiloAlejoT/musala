@@ -30,6 +30,14 @@ export class DronesService {
     return await this.entitiesService.findAll();
   }
 
+  async getDroneById(id: number): Promise<Drone> {
+    const drone = await this.entitiesService.findById(id)
+    if (drone)
+      return drone
+    else
+      throw new HttpException('Resource not found', HttpStatus.NOT_FOUND);
+  }
+
   async getDroneBySerialNumber(serialNumber: string): Promise<Drone> {
     const drone = await this.entitiesService.findBySerialNumber(serialNumber)
     if (drone)

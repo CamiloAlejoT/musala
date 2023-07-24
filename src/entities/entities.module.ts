@@ -4,12 +4,14 @@ import { EntitiesController } from './entities/entities.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DroneEntity } from './entities/drone.entity'
 import { MedicationEntity } from '../entities/entities/medication.entity'
+import { DispatchEntity } from './entities/dispatch.entity';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([
             DroneEntity,
-            MedicationEntity
+            MedicationEntity,
+            DispatchEntity
         ]),
     ],
     providers: [EntitiesService],

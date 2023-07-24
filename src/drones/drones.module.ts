@@ -7,6 +7,7 @@ import { EntitiesModule } from 'src/entities/entities.module';
 @Module({
   controllers: [DronesController],
   providers: [DronesService],
+  exports: [DronesService],
   imports: [EntitiesModule]
 })
 export class DronesModule { }
