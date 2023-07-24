@@ -35,9 +35,10 @@ export class DispatchService {
 
   async getDetailedDrone(id: number): Promise<DetailedDrone> {
     const dispatch: Dispatch[] =
-      await this.entitiesService.findDispatchByDroneID(id);
+      await this.entitiesService.findDispatchByDroneID(id)
+    const activeDispatch = dispatch.filter( e => e.status !== DispatchStatus.DONE);
     let drone: Drone = await this.dronesService.getDroneById(id);
-    if (dispatch.length > 0) {
+    if (activeDispatch.length > 0) {
       const query = this.generateQuery(dispatch[0].medicine);
       const medicationsAsigned: Medication[] =
         await this.medicationService.findMedicationByQuery(query);
