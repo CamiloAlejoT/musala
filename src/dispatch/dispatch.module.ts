@@ -8,10 +8,6 @@ import { EntitiesModule } from 'src/entities/entities.module';
 @Module({
   controllers: [DispatchController],
   providers: [DispatchService],
-  imports: [
-    MedicationModule,
-    DronesModule, 
-    EntitiesModule
-  ]
+  imports: [MedicationModule, DronesModule, EntitiesModule],
 })
-export class DispatchModule { }
+export class DispatchModule {}

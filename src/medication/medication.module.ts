@@ -7,6 +7,6 @@ import { EntitiesModule } from 'src/entities/entities.module';
   controllers: [MedicationController],
   providers: [MedicationService],
   exports: [MedicationService],
-  imports: [EntitiesModule]
+  imports: [EntitiesModule],
 })
-export class MedicationModule { }
+export class MedicationModule {}

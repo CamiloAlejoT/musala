@@ -20,9 +20,9 @@ import { ScheduleModule } from '@nestjs/schedule';
       synchronize: true,
     }),
     DispatchModule,
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

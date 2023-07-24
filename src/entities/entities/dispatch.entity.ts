@@ -4,19 +4,18 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class DispatchEntity implements Dispatch {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ length: 100 })
-    status: DispatchStatus;
+  @Column({ length: 100 })
+  status: DispatchStatus;
 
-    @Column()
-    droneAsigned: number;
+  @Column()
+  droneAsigned: number;
 
-    @Column()
-    medicine: string;
+  @Column()
+  medicine: string;
 
-    @Column()
-    weight: number;
+  @Column()
+  weight: number;
 }
- 

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+} from '@nestjs/common';
 import { EntitiesService } from './entities.service';
 import { DroneEntity } from './drone.entity';
 
@@ -18,12 +26,12 @@ export class EntitiesController {
 
   @Put(':id/update')
   async update(@Param('id') id, @Body() entityData: DroneEntity): Promise<any> {
-      entityData.id = Number(id);
-      return this.entitiesService.update(entityData);
+    entityData.id = Number(id);
+    return this.entitiesService.update(entityData);
   }
 
   @Delete(':id/delete')
-    async delete(@Param('id') id): Promise<any> {
-      return this.entitiesService.delete(id);
-  }  
+  async delete(@Param('id') id): Promise<any> {
+    return this.entitiesService.delete(id);
+  }
 }

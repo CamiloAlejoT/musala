@@ -1,15 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { DispatchService } from './dispatch.service';
-import { Dispatch } from 'src/interfaces/dispatch.interface'
-
+import { Dispatch } from 'src/interfaces/dispatch.interface';
 
 @Controller('dispatch')
 export class DispatchController {
-  constructor(private dispatchService: DispatchService) { }
+  constructor(private dispatchService: DispatchService) {}
 
   @Post('create')
   createNewDrone(@Body() data: Dispatch) {
-    return this.dispatchService.createDispatch(data)
+    return this.dispatchService.createDispatch(data);
   }
 
   @Get('all')
@@ -23,8 +30,8 @@ export class DispatchController {
   }
 
   @Get('droneDetail/:id')
-  getDetailedDrone(@Param('id') id: number){
-    return this.dispatchService.getDetailedDrone(id)
+  getDetailedDrone(@Param('id') id: number) {
+    return this.dispatchService.getDetailedDrone(id);
   }
 
   // // @Patch(':id')
