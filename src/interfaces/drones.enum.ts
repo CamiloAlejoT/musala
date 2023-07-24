@@ -31,4 +31,13 @@ export const DRONEESTATEINCORRECT = "Drone state could not be set (IDLE, LOADING
 export const DRONEMODELINCORRECT = "Drone model could not be set (Lightweight, Middleweight, Cruiserweight, Heavyweight)"
 
 
+export const MEDICATIONNAMEREGEX = /^[A-Za-z0-9\-_]+$/;
+export const MEDICATIONCODEREGEX = /^[A-Z0-9_]+$/
+
+
+export const NAMENOTALLOWED = "Medication name not allowed, allowed only letters, numbers, - and _"
+export const CODENOTALLOWED = "Medication code not allowed, allowed only upper case letters, underscore and numbers"
+
+
+
 export const DRONEENTITY = "drone_entity"

@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { Drone } from "../../interfaces/drones.interface"
 import { DroneState, DroneWeight } from "../../interfaces/drones.enum"
 
+
 @Entity()
 export class DroneEntity implements Drone {
     @PrimaryGeneratedColumn()

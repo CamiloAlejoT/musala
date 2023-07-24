@@ -21,8 +21,6 @@ import {
 @Injectable()
 export class DronesService {
 
-  private drones: Drone[];
-
   constructor(
     private entitiesService: EntitiesService
   ) { }

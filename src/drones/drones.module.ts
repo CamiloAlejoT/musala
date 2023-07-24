@@ -6,11 +6,7 @@ import { EntitiesModule } from 'src/entities/entities.module';
 
 @Module({
   controllers: [DronesController],
-  providers: [
-    DronesService
-  ],
-  imports: [
-    EntitiesModule
-  ]
+  providers: [DronesService],
+  imports: [EntitiesModule]
 })
 export class DronesModule { }
