@@ -52,6 +52,15 @@ Non-functional requirements
 ```
 
 ## Solution 
+- get all drones: [base URL]/drones/all
+- get drone by serial number: [base URL]/drones/[serial Number]
+- get drones by other fields: [base ULR]/drones/[ params ] 
+    * params: model, state, weightLimit, batteryCapacity, weightLimitSorter and batteryCapacitySorter, the fileds weightLimitSorter and batteryCapacitySorter are booleans if false or not set the result will be bigget than, if true the results will be lower than. E.G:
+    http://localhost:3000/drones/?batteryCapacity=60&batteryCapacitySorter=true all drones with battery less than 60%  or http://localhost:3000/drones/?model=Lightweight&state=LOADED all drones in estatus "LOADED" and model "Lightweight"
+
+- create new drone: [base URL]/drones/create
+- update drone: can not update a drone that have a dispatch in a state diffrent than DONE
+- delte drone: can not delete a drone that have a dispatch in a state diffrent than DONE
 
 
 ## Installation
