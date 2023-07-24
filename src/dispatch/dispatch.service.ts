@@ -1,5 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Dispatch } from 'src/interfaces/dispatch.interface';
+import { DetailedDrone, Drone } from 'src/interfaces/drones.interface'
+import { Medication } from 'src/interfaces/medication.interface'
 import { MedicationService } from 'src/medication/medication.service'
 import { DronesService } from 'src/drones/drones.service'
 import { EntitiesService } from 'src/entities/entities/entities.service'
@@ -29,6 +31,18 @@ export class DispatchService {
 
   async findOne(id: number) {
     return await this.entitiesService.findDispatchByID(id)
+  }
+
+  async getDetailedDrone(id: number): Promise<DetailedDrone> {
+    const dispatch: Dispatch[] = await this.entitiesService.findDispatchByDroneID(id)
+    let drone: Drone = await this.dronesService.getDroneById(id)
+    if (dispatch.length > 0) {
+      const query = this.generateQuery(dispatch[0].medicine)
+      const medicationsAsigned: Medication[] = await this.medicationService.findMedicationByQuery(query)
+      return { ...drone, medicines: medicationsAsigned }
+    } else {
+      return { ...drone, medicines: [] }
+    }
   }
 
 
@@ -66,6 +80,15 @@ export class DispatchService {
   }
 
   async validateWeight(medication: string): Promise<{ dispatchWeight: number, res: boolean }> {
+    const query = this.generateQuery(medication)
+    const medicationsAsigned = await this.medicationService.findMedicationByQuery(query)
+
+    let totalWeight = 0
+    medicationsAsigned.forEach(e => totalWeight += e.weight)
+    return { res: totalWeight < 500 ? false : true, dispatchWeight: totalWeight }
+  }
+
+  generateQuery(medication: string) {
     const newIds = medication.split(',')
     let flag = true
     let query = `SELECT * FROM ${MEDICATIONENTITY} WHERE `
@@ -73,11 +96,8 @@ export class DispatchService {
       query += flag ? `id=${e} ` : `OR id=${e} `
       flag = false
     })
-    const medicationsAsigned = await this.medicationService.findMedicationByQuery(query)
 
-    let totalWeight = 0
-    medicationsAsigned.forEach(e => totalWeight += e.weight)
-    return { res: totalWeight < 500 ? false : true, dispatchWeight: totalWeight }
+    return query
   }
 
 

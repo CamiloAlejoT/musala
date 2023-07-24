@@ -22,6 +22,11 @@ export class DispatchController {
     return this.dispatchService.findOne(+id);
   }
 
+  @Get('droneDetail/:id')
+  getDetailedDrone(@Param('id') id: number){
+    return this.dispatchService.getDetailedDrone(id)
+  }
+
   // // @Patch(':id')
   // // update(@Param('id') id: string, @Body() updateDispatchDto: UpdateDispatchDto) {
   // //   return this.dispatchService.update(+id, updateDispatchDto);

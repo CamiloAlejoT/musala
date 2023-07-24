@@ -75,7 +75,7 @@ export class EntitiesService {
         return await this.dispatchRepository.save(entity)
     }
 
-    async findDispatchByDroneID(droneId: number) {
+    async findDispatchByDroneID(droneId: number):Promise<DispatchEntity[]>  {
         return await this.dispatchRepository.find({ where: { droneAsigned: droneId } })
     }
 
