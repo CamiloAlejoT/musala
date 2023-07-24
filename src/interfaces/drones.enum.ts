@@ -35,6 +35,7 @@ export const DRONEESTATEINCORRECT =
   'Drone state could not be set (IDLE, LOADING, LOADED, DELIVERING, DELIVERED, RETURNING).';
 export const DRONEMODELINCORRECT =
   'Drone model could not be set (Lightweight, Middleweight, Cruiserweight, Heavyweight)';
+export const DRONEINUSE = "Can not update/Delete a drone that is asigned for a dispatch."
 
 export const MEDICATIONNAMEREGEX = /^[A-Za-z0-9\-_]+$/;
 export const MEDICATIONCODEREGEX = /^[A-Z0-9_]+$/;
@@ -52,6 +53,9 @@ export const DISPATCHDRONEBATTERYERROR =
   "The selected drone's baterry is under 25% please select another drone or recharge the drone";
 export const DRONEALREADYUSED =
   'The selected dron for the dispatch is already in use';
+export const DISPATCHESTATUSNOTVALID = "Dispatch estatus is not valid."
+export const NOTGETBACKESTATUS = "Change Done estatus es not valid action"
+
 
 export const DRONEENTITY = 'drone_entity';
 export const MEDICATIONENTITY = "'medication_entity'";

@@ -17,18 +17,19 @@ import {
   DRONEENTITY,
   DroneWeight,
   DroneState,
+  DRONEINUSE,
 } from '../interfaces/drones.enum';
+import { Dispatch } from 'src/interfaces/dispatch.interface';
 
 @Injectable()
 export class DronesService {
-  constructor(private entitiesService: EntitiesService) {}
+  constructor(private entitiesService: EntitiesService) { }
 
   @Cron(CronExpression.EVERY_MINUTE) // Adjust the schedule as needed
   async checkBatteryLevels() {
     const drones = await this.getAllDrones();
     for (const drone of drones) {
       if (drone.batteryCapacity < 50) {
-        console.log(drone);
         await this.entitiesService.createAuditLog(
           drone.serialNumber,
           drone.batteryCapacity,
@@ -112,7 +113,11 @@ export class DronesService {
     return { message: 'Drone updated successfully', result: result };
   }
 
-  async deleteDrone(id: Number) {
+  async deleteDrone(id: number) {
+    const asignedDispatches: Dispatch[] = await this.entitiesService.findDispatchByDroneID(id)
+    if (asignedDispatches.length > 0)
+      return { res: false, message: DRONEINUSE };
+      
     const result = await this.entitiesService.delete(id);
     return { message: 'Drone deleted successfully', result: result };
   }
@@ -153,6 +158,10 @@ export class DronesService {
     const drones: Drone[] = await this.entitiesService.findAll();
     if (!drones.some((drone) => drone.id === id))
       return { res: false, message: DRONENOTFOUND };
+
+    const asignedDispatches: Dispatch[] = await this.entitiesService.findDispatchByDroneID(id)
+    if (asignedDispatches.length > 0)
+      return { res: false, message: DRONEINUSE };
 
     return { res: true, message: '' };
   }

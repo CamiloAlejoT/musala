@@ -7,12 +7,14 @@ import { DronesService } from 'src/drones/drones.service';
 import { EntitiesService } from 'src/entities/entities/entities.service';
 import {
   DISPATCHDRONEBATTERYERROR,
+  DISPATCHESTATUSNOTVALID,
   DISPATCHWEIGHTBIGERTHANDRONE,
   DISPATCHWEIGHTERROR,
   DRONEALREADYUSED,
   DispatchStatus,
   EMPTYFIELDS,
   MEDICATIONENTITY,
+  NOTGETBACKESTATUS,
 } from 'src/interfaces/drones.enum';
 
 @Injectable()
@@ -21,7 +23,7 @@ export class DispatchService {
     private medicationService: MedicationService,
     private dronesService: DronesService,
     private entitiesService: EntitiesService,
-  ) {}
+  ) { }
 
   async findAll() {
     return await this.entitiesService.findAllDispatches();
@@ -46,7 +48,7 @@ export class DispatchService {
   }
 
   async createDispatch(data: Dispatch) {
-    const { res, message, newData } = await this.validateDroneInformation(data);
+    const { res, message, newData } = await this.validateDispatchInformation(data);
     if (res) {
       return this.insertNewDispatch(newData);
     } else {
@@ -59,7 +61,29 @@ export class DispatchService {
     return { message: 'Dispatch created successfully.', result: insert };
   }
 
-  async validateDroneInformation(
+  async updateDispatch(id: number, data: DispatchStatus) {
+    const { res, message, newDispatch } = await this.validateDispatchStatus(id, data)
+    if (res){
+      const update = await this.entitiesService.updateDispatch(newDispatch)
+      return { message: 'Dispatch updated successfully.', result: update };
+    }
+    else
+      throw new HttpException(message, HttpStatus.NOT_FOUND);
+  }
+
+  async validateDispatchStatus(id: number, status: DispatchStatus): Promise<{res: boolean, message: string, newDispatch? : Dispatch}> {
+    if (!Object.values(DispatchStatus).includes(status as DispatchStatus))
+      return { res: false, message: DISPATCHESTATUSNOTVALID }
+
+    const currentDispatch = await this.entitiesService.findDispatchByID(id)
+    if (currentDispatch.status === DispatchStatus.DONE)
+      return { res: false, message: NOTGETBACKESTATUS }
+
+    return { res: true, message: "", newDispatch: { ...currentDispatch, status: status } }
+  }
+
+
+  async validateDispatchInformation(
     data: Dispatch,
   ): Promise<{ res: boolean; message: string; newData?: Dispatch }> {
     if (!data.droneAsigned || !data.medicine)
@@ -137,7 +161,8 @@ export class DispatchService {
     const drones: Dispatch[] = await this.entitiesService.findDispatchByDroneID(
       droneId,
     );
-    if (drones.length > 0) return { res: true, message: DRONEALREADYUSED };
+    const activeDispatch = drones.find( e => e.status !== DispatchStatus.DONE)
+    if (activeDispatch) return { res: true, message: DRONEALREADYUSED };
 
     return { res: false, message: '' };
   }

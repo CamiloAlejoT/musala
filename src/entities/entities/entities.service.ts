@@ -45,7 +45,7 @@ export class EntitiesService {
     return await this.entityRepository.update(entity.id, entity);
   }
 
-  async delete(id): Promise<DeleteResult> {
+  async delete(id: number): Promise<DeleteResult> {
     return await this.entityRepository.delete(id);
   }
 
@@ -82,6 +82,10 @@ export class EntitiesService {
     return await this.dispatchRepository.find({
       where: { droneAsigned: droneId },
     });
+  }
+
+  async updateDispatch(entity: DispatchEntity): Promise<UpdateResult> {
+    return await this.dispatchRepository.update(entity.id, entity);
   }
 
   // periodic task

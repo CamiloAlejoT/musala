@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
   Patch,
   Param,
@@ -9,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { DispatchService } from './dispatch.service';
 import { Dispatch } from 'src/interfaces/dispatch.interface';
+import { DispatchStatus } from 'src/interfaces/drones.enum';
 
 @Controller('dispatch')
 export class DispatchController {
@@ -34,13 +36,9 @@ export class DispatchController {
     return this.dispatchService.getDetailedDrone(id);
   }
 
-  // // @Patch(':id')
-  // // update(@Param('id') id: string, @Body() updateDispatchDto: UpdateDispatchDto) {
-  // //   return this.dispatchService.update(+id, updateDispatchDto);
-  // // }
+  @Put(':id/update')
+  updateData(@Param('id') id, @Body() data: {"status": DispatchStatus}) {
+    return this.dispatchService.updateDispatch(id, data.status) 
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.dispatchService.remove(+id);
-  // }
 }
