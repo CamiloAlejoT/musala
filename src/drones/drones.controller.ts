@@ -8,6 +8,11 @@ export class DronesController {
 
     constructor(private readonly dronesService: DronesService) { }
 
+    @Get("auditLog")
+    getAuditLog(){
+        return this.dronesService.getAuditLog()
+    }
+
     @Get("all")
     getAllDrones() {
         return this.dronesService.getAllDrones()

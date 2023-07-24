@@ -1,4 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { Cron, CronExpression } from '@nestjs/schedule';
 import * as fs from 'fs';
 import { Drone } from "../interfaces/drones.interface"
 import { EntitiesService } from "../entities/entities/entities.service"
@@ -24,6 +25,23 @@ export class DronesService {
   constructor(
     private entitiesService: EntitiesService
   ) { }
+
+  @Cron(CronExpression.EVERY_MINUTE) // Adjust the schedule as needed
+  async checkBatteryLevels() {
+
+
+    const drones = await this.getAllDrones();
+    for (const drone of drones) {
+      if (drone.batteryCapacity < 50) {
+        console.log(drone);
+        await this.entitiesService.createAuditLog(drone.serialNumber, drone.batteryCapacity);
+      }
+    }
+  }
+
+  async getAuditLog(){
+    return await this.entitiesService.getAuditLog()
+  }
 
 
   async getAllDrones(): Promise<Drone[]> {

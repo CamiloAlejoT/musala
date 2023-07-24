@@ -6,6 +6,7 @@ import { MedicationModule } from './medication/medication.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EntitiesModule } from './entities/entities.module';
 import { DispatchModule } from './dispatch/dispatch.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { DispatchModule } from './dispatch/dispatch.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    DispatchModule
+    DispatchModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],

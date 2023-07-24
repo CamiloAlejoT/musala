@@ -5,6 +5,7 @@ import { UpdateResult, DeleteResult } from 'typeorm';;
 import { DroneEntity } from './drone.entity'
 import { MedicationEntity } from 'src/entities/entities/medication.entity'
 import { DispatchEntity } from 'src/entities/entities/dispatch.entity'
+import { AuditLog } from './audit-log.entity';
 @Injectable()
 export class EntitiesService {
     constructor(
@@ -13,9 +14,12 @@ export class EntitiesService {
         @InjectRepository(MedicationEntity)
         private medicationRepository: Repository<MedicationEntity>,
         @InjectRepository(DispatchEntity)
-        private dispatchRepository: Repository<DispatchEntity>
+        private dispatchRepository: Repository<DispatchEntity>,
+        @InjectRepository(AuditLog)
+        private auditLogRepository: Repository<AuditLog>
     ) { }
 
+    // drones
     async findAll(): Promise<DroneEntity[]> {
         return await this.entityRepository.find();
     }
@@ -45,7 +49,7 @@ export class EntitiesService {
     }
 
 
-
+    // medication
     async findAllMedications(): Promise<MedicationEntity[]> {
         return await this.medicationRepository.find();
     }
@@ -63,7 +67,7 @@ export class EntitiesService {
     }
 
 
-
+    // dispatch
     async findAllDispatches(): Promise<DispatchEntity[]> {
         return await this.dispatchRepository.find();
     }
@@ -75,8 +79,22 @@ export class EntitiesService {
         return await this.dispatchRepository.save(entity)
     }
 
-    async findDispatchByDroneID(droneId: number):Promise<DispatchEntity[]>  {
+    async findDispatchByDroneID(droneId: number): Promise<DispatchEntity[]> {
         return await this.dispatchRepository.find({ where: { droneAsigned: droneId } })
+    }
+
+
+    // periodic task
+    async createAuditLog(droneSerialNumber: string, batteryLevel: number): Promise<AuditLog> {
+        const auditLog = new AuditLog();
+        auditLog.droneSerialNumber = droneSerialNumber;
+        auditLog.batteryLevel = batteryLevel;
+        auditLog.timestamp = new Date();
+        return this.auditLogRepository.save(auditLog);
+    }
+
+    async getAuditLog() {
+        return this.auditLogRepository.find()
     }
 
 
